@@ -1,0 +1,66 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <div class="container" style="background-color: #030325">
+        <div>
+            <div class="item details">
+                <p>Datum: {% if call.active %} {{ call.date }} {% endif %}</p>
+                <p>Cas: {% if call.active %} {{ call.time }} {% endif %}</p>
+                <p>Popis mista: {% if call.active %} {{ call.place_desc }} {% endif %}</p>
+                <p>Popis udalosti: {% if call.active %} {{ call.inc_desc }} {% endif %}</p>
+            </div>
+
+            <div>
+                <div class="item chiefs">
+                    {% for chief in members %}
+                        {% if chief.function == "VJ" or chief.function == "ZVJ" or chief.function == "VD" %}
+                            <div class="member-card" style="margin-top: 20px">
+                                <img src="{{ chief.image }}" alt="{{ chief }}" style="width: 100%">
+                                <p><b>{{ chief.last_name }}</b>
+                                <br>{{ chief.first_name }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+    
+                <div class="item driver">
+                    {% for driver in members %}
+                        {% if driver.function == "S" %}
+                            <div class="member-card">
+                                <img src="{{ driver.image }}" alt="{{ driver }}" style="width: 100%">
+                                <p><b>{{ driver.last_name }}</b>
+                                <br>{{ driver.first_name }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+    
+                <div class="item member">
+                    {% for member in members %}
+                        {% if member.function == "H" or member.function == "SH" or member.function == "T" %}
+                            <div class="member-card">
+                                <img src="{{ member.image }}" alt="{{ member }}" style="width: 100%">
+                                <p><b>{{ member.last_name }}</b>
+                                <br>{{ member.first_name }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    
+        <div class="item machinery">
+            {% if call.active %}
+            {% for machine in machinery %}
+                <div class="Machine-card" style="margin-left: 10px; margin-top: 10px">
+                    <img src="{{ machine.image }}" alt="{{ machine.name }}" style="width: 50%; display: inline-block">
+                    <p style="margin-top: 0; display: inline-block; color: white">
+                        <b>{{ machine.name }}</b>
+                        <br>{{ machine.call_sign }}
+                        <br>{{ machine.licence_plate }}</p>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

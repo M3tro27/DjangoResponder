@@ -1,0 +1,12 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <h2>Přidání techniky</h2>
+    <form action="" method="post">
+    <div style="color:white;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Potvrdit">
+    </div>
+    </form>
+{% endblock %}

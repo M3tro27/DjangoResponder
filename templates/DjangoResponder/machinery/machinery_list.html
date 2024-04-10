@@ -1,0 +1,28 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <h2 style="color: white">Seznam technikz</h2>
+    <a href="{% url 'machinery_create' %}" style="color: white">Přidat techniku</a>
+    <table id="machinery" style="background-color: white; width: 100%; text-align: center">
+    <tr style="background-color: lightgray">
+        <th>Název</th>
+        <th>SMS zkratka</th>
+        <th>RZ</th>
+        <th>Volací znak</th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    <tr>
+        {% for machinery in machinery_list %}
+    </tr>
+    <tr>
+        <td>{{ machinery.name }}</td>
+        <td>{{ machinery.mark }}</td>
+        <td>{{ machinery.licence_plate }}</td>
+        <td>{{ machinery.call_sign }}</td>
+        <td><a href="{% url 'machinery_update' pk=machinery.pk %}">Editovat</a></td>
+        <td><a href="{% url 'machinery_delete' pk=machinery.pk %}">Smazat</a></td>
+    </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

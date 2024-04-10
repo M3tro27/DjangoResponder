@@ -1,0 +1,19 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+<h2 style="color: white">Jednotka</h2>
+<div style="color: white">
+    <p>Název: {{ object.name }}</p>
+    <p>Kategorie: {{ object.category }}</p>
+    <p>Číslo: {{ object.pk }}</p>
+    <div>
+        <h3>Adresa:</h3>
+        <p>Ulice: {{ object.street }}</p>
+        <p>Město: {{ object.city }}</p>
+        <p>Stát: {{ object.country }}</p>
+        <p>PSČ: {{ object.zipcode }}</p>
+        <a href="{% url 'unit_update' pk=object.pk %}"><button style="font-size: 15px">Upravit jednotku</button></a>
+        <a href="{% url 'unit_delete' pk=object.pk %}"><button style="font-size: 15px">Smazat jednotku</button></a>
+    </div>
+</div>
+{% endblock %}

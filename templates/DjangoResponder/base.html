@@ -1,0 +1,244 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="font-family: Arial,sans-serif">
+<head>
+    <meta charset="UTF-8">
+    <title>Responder</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+    <style>
+
+    .marker {
+        background-image: url("{% static 'images/home.png' %}");
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .marker-2 {
+        background-image: url("{% static 'images/fire-station.png' %}");
+        background-size: cover;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    </style>
+</head>
+
+<body>
+
+{#<audio src="{% say 'cs' 'Dobrý den' %}"></audio>#}
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.3.1/mapbox-gl-directions.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.3.1/mapbox-gl-directions.css" type="text/css">
+
+<div class="centercolumn">
+    <div style="width: 100%; background-color: yellow">
+        <button id="menu" type="button" onclick="openNav()" style="display: inline-block">☰</button>
+        <a href="{% url 'index' %}">
+            <h1 id="call" style="display: inline-block;">
+                {% if call.active %}
+                    {{ call.call_short_name}}
+                {% else %}
+                    Zatím žádný výjezd
+                {% endif %}
+            </h1></a>
+    </div>
+    <div>
+        <h2 style="background-color: darkred">
+            {% if call.active %}
+                {{ call.address  }}
+            {% else %}
+                Dejte si kafíčko☕
+            {% endif %}
+        </h2>
+    </div>
+    <div>
+        {% block center_content %}
+
+        {% endblock %}
+    </div>
+</div>
+
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="{% url 'member_list' %}">Členové</a>
+    <a href="{% url 'unitdetail' %}">Jednotka</a>
+    <a href="{% url 'machinery_list' %}">Technika</a>
+    <a href="{% url 'equipment_list' %}">Vybavení</a>
+    <a href="{% url 'call_list' %}">Výjezdy</a>
+</div>
+
+<div class="rightcolumn">
+    <div id='map' style='width: 50%; height: 100%; position: absolute'></div>
+
+    <div id ="timer" style="
+        position: absolute;
+        color: white;
+        background-color: #030325;
+        font-size: 500%;
+        bottom: 0;
+        right: 0;
+        z-index: 10;
+        padding-left: 10px;
+    "></div>
+
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiamFrdWJidmFnbmVyIiwiYSI6ImNsdTE5NHhvYTAwMTgycXJ1YXg5cTI1eXIifQ.dvd36veM8ILq0U6lusajbg';
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [{{ unit.longitude }}, {{ unit.latitude }}],
+        zoom: 12
+    });
+
+      {% if call.active %}
+    map.on('load', () => {
+        const startCoordinates = [{{ unit.longitude }}, {{ unit.latitude }}];
+        const endCoordinates = [{{ call.longitude }}, {{ call.latitude }}];
+
+        // Add markers for start (unit) and end (call) locations
+        const unitMarkerEl = document.createElement('div');
+        unitMarkerEl.className = 'marker';
+        new mapboxgl.Marker(unitMarkerEl)
+            .setLngLat(startCoordinates)
+            .addTo(map);
+
+        const callMarkerEl = document.createElement('div');
+        callMarkerEl.className = 'marker-2';
+        new mapboxgl.Marker(callMarkerEl)
+            .setLngLat(endCoordinates)
+            .addTo(map);
+
+        // Initialize the Mapbox Directions object
+        const directions = new MapboxDirections({
+            accessToken: mapboxgl.accessToken,
+            unit: 'metric', // Specify the units (metric or imperial)
+            profile: 'mapbox/driving', // Specify the profile (driving, walking, cycling)
+            controls: {
+                inputs: false, // Hide the inputs for origin and destination
+                instructions: false, // Hide the instructions panel
+                profileSwitcher: false, // Hide the profile switcher
+                geocoder: false // Disable the reverse geocoding plugin
+            }
+        });
+
+        map.addControl(directions, 'top-left'); // Add the directions control to the map
+
+        // Set the origin and destination for the route
+        directions.setOrigin(startCoordinates);
+        directions.setDestination(endCoordinates);
+
+        // Listen for the route event to display the route on the map
+        directions.on('route', (event) => {
+            const route = event.route[0];
+            const routeGeoJSON = {
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: route.geometry.coordinates
+                }
+            };
+
+            map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: routeGeoJSON
+                },
+                paint: {
+                    'line-color': 'red',
+                    'line-width': 2
+                }
+            });
+
+            const bounds = route.geometry.coordinates.reduce((bounds, coord) => bounds.extend(coord), new mapboxgl.LngLatBounds(route.geometry.coordinates[0], route.geometry.coordinates[1]));
+            map.fitBounds(bounds, { padding: 50 });
+        });
+    });
+    {% else %}
+      map.on('load', () => {
+          const geojson = {
+              type: 'FeatureCollection',
+              features: [
+                  {
+                      type: 'Feature',
+                      geometry: {
+                          type: 'Point',
+                          coordinates: [{{ unit.longitude }}, {{ unit.latitude }}]
+                      },
+                      properties: {
+                          markerClass: 'marker'
+                      }
+                  }
+              ]
+          };
+
+          for (const feature of geojson.features) {
+              const el = document.createElement('div');
+              el.className = feature.properties.markerClass;
+
+              new mapboxgl.Marker(el)
+                  .setLngLat(feature.geometry.coordinates)
+                  .addTo(map);
+          }
+      });
+    {% endif %}
+
+    function setTimer(minutes) {
+            const timerElement = document.getElementById("timer");
+            timerElement.textContent = `0${minutes}:00`;
+    }
+
+    function startTimer(minutes) {
+        const timerElement = document.getElementById("timer");
+        let remainingSeconds = minutes * 60;
+
+        const timerInterval = setInterval(updateTimer, 1000);
+
+        function updateTimer() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                timerElement.textContent = "00:00";
+                playBell()
+            }
+
+            remainingSeconds--;
+        }
+    }
+
+    function playGong() {
+        const gong = new Audio('{% static 'audio/Gong sound.mp3' %}');
+        gong.play();
+    }
+
+    function playBell() {
+        const bell = new Audio('{% static 'audio/Bell sound.mp3' %}');
+        bell.play()
+    }
+
+        // Always set the initial timer
+    setTimer({{ unit.minutes_to_answer }});
+
+    // Start the timer only if the call is active
+    {% if call.active %}
+        startTimer({{ unit.minutes_to_answer }});
+        playGong()
+    {% endif %}
+    </script>
+</div>
+<script src="{% static 'js/base.js' %}"></script>
+</body>
+</html>

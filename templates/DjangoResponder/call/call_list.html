@@ -1,0 +1,42 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <h2 style="color: white">Seznam výjezdů</h2>
+    <a href="{% url 'call_create' %}" style="color: white">Vytvoření výjezdu</a>
+    <table id="calls" style="background-color: white; width: 100%; text-align: center">
+    <tr style="background-color: lightgray">
+        <th>Aktivní</th>
+        <th>Datum</th>
+        <th>Typ</th>
+        <th>Podtyp</th>
+        <th>Obec</th>
+        <th>Vozidla</th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    <tr>
+        {% for call in call_list %}
+    </tr>
+    <tr>
+        <td>
+            {% if call.active %}
+                ✅
+            {% else %}
+                ❌
+            {% endif %}
+        </td>
+        <td>{{ call.date }}</td>
+        <td>{{ call.inc_type }}</td>
+        <td>{{ call.inc_subtype }}</td>
+        <td>{{ call.city }}</td>
+        <td>
+            {% for truck in call.trucks.all %}
+                {{ truck.mark }}
+            {% endfor %}
+        </td>
+        <td><a href="{% url 'call_update' pk=call.pk %}">Editovat</a></td>
+        <td><a href="{% url 'call_delete' pk=call.pk %}">Smazat</a></td>
+    </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+<h2 style="color:white;;">Smazání člena</h2>
+<form action="" method="post">
+    <div>
+        {% csrf_token %}
+        <p style="color: white">Opravdu si přejete smazat "{{ object.first_name }} {{ object.last_name }}"?</p>
+        <input type="submit" value="Potvrdit">
+    </div>
+</form>
+{% endblock %}

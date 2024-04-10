@@ -1,0 +1,12 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+<form action="" method="post">
+    <div style="color: white">
+        {% csrf_token %}
+        <p>Opravdu si přejete smazat jednotku? <br>
+            Tato akce je nevrátná a smaže veškeré údaje o členech, technice, vybavení a výjezdech!</p>
+        <input type="submit" value="Potvrdit">
+    </div>
+</form>
+{% endblock %}

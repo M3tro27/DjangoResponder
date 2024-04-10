@@ -1,0 +1,32 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <h2 style="color: white">Seznam vybavení</h2>
+    <a href="{% url 'equipment_create' %}" style="color: white">Přidat vybavení</a>
+    <table id="equipment" style="background-color: white; width: 100%; text-align: center">
+    <tr style="background-color: lightgray">
+        <th>Název</th>
+        <th>Typ</th>
+        <th>Vlastník</th>
+        <th>Zařazeno od</th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    <tr>
+        {% for equipment in equipment_list %}
+    </tr>
+    <tr>
+        <td>{{ equipment.equipment_name }}</td>
+        <td>{{ equipment.equipment_type }}</td>
+        {% if equipment.owner == NULL %}
+            <td>{{ equipment.machinery }}</td>
+            {% else %}
+            <td>{{ equipment.owner }}</td>
+        {% endif %}
+        <td>{{ equipment.equipment_date }}</td>
+        <td><a href="{% url 'equipment_update' pk=equipment.pk %}">Editovat</a></td>
+        <td><a href="{% url 'equipment_delete' pk=equipment.pk %}">Smazat</a></td>
+    </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

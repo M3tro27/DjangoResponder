@@ -1,0 +1,30 @@
+{% extends 'DjangoResponder/base.html' %}
+
+{% block center_content %}
+    <h2 style="color: white">Seznam členů</h2>
+    <a href="{% url 'membercreate' %}" style="color: white">Přidat člena</a>
+    <table id="members" style="background-color: white; width: 100%; text-align: center">
+    <tr style="background-color: lightgray">
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>Funkce</th>
+        <th>Telefon</th>
+        <th>E-mail</th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    <tr>
+        {% for member in member_list %}
+    </tr>
+    <tr>
+        <td>{{ member.first_name }}</td>
+        <td>{{ member.last_name }}</td>
+        <td>{{ member.function }}</td>
+        <td>{{ member.phone }}</td>
+        <td>{{ member.email }}</td>
+        <td><a href="{% url 'memberupdate' pk=member.pk %}">Editovat</a></td>
+        <td><a href="{% url 'memberdelete' pk=member.pk %}">Smazat</a></td>
+    </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

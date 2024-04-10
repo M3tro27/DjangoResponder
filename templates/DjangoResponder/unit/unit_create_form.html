@@ -1,0 +1,20 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="display: table; margin: auto">
+<head>
+    <meta charset="UTF-8">
+    <title>Responder</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body style="display: table-cell; vertical-align: middle">
+    <h1 style="color: white">Prosím založte jednotku!</h1>
+    <form action="" method="post">
+    <div style="color: white; vertical-align: middle">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Potvrdit">
+    </div>
+    </form>
+</body>
+</html> 
