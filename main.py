@@ -2,8 +2,9 @@ import requests
 import json
 
 
+# Program to send calls
 def send_call(data):
-    url = 'http://localhost:8000/call-initialization/'
+    url = 'http://localhost:8000/call-initialization/' # Url of Host
     headers = {'Content-Type': 'application/json'}
     response = requests.post(url, data=json.dumps(data), headers=headers)
 
@@ -13,6 +14,7 @@ def send_call(data):
         print("Failed to send JSON", response.status_code)
 
 
+# Actual data that are send
 if __name__ == '__main__':
     json_data = {
         "machinery": ["1V", "2V"],
