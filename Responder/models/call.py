@@ -75,14 +75,14 @@ class Call(models.Model):
         if Unit.objects.exists():
             self.unit = Unit.objects.first()
         address = f"{self.address}, {self.city}, Česko"
-        latitude, longitude = get_geocordinates(address)
+        latitude, longitude = get_geocordinates(address)  # Getting coordinates out of address
         if latitude is not None and longitude is not None:
             self.latitude = latitude
             self.longitude = longitude
         super().save(*args, **kwargs)
 
     def call_short_name(self):
-        return self.inc_type + " - " + self.inc_subtype
+        return str(self.inc_level) + ", " + self.inc_type + " - " + self.inc_subtype
 
     def call_address(self):
         return self.city + " " + self.address

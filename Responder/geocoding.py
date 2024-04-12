@@ -1,6 +1,7 @@
 import requests
 
 
+# Function for geocoding
 def get_geocordinates(address):
     access_token = "pk.eyJ1IjoiamFrdWJidmFnbmVyIiwiYSI6ImNsdTE5NHhvYTAwMTgycXJ1YXg5cTI1eXIifQ.dvd36veM8ILq0U6lusajbg"
     base_url = "https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"

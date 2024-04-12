@@ -3,6 +3,7 @@ from django.urls import path
 
 from . import views
 
+# List of URIs
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),

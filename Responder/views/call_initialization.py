@@ -4,6 +4,7 @@ from Responder.models import Call, Machinery
 from django.views.decorators.csrf import csrf_exempt
 
 
+# Parsing JSON
 def json_parsing(data):
     call = Call(
         inc_level=data['level'],
@@ -18,12 +19,14 @@ def json_parsing(data):
     )
 
     call.save()
+    # Adding trucks to call object
     machinery = data['machinery']
     for machine_mark in machinery:
         truck = Machinery.objects.get(mark=machine_mark)
         call.trucks.add(truck)
 
 
+# Receiving call
 @csrf_exempt
 def receive_call_initialization(request):
     if request.method == 'POST':

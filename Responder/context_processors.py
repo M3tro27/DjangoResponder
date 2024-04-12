@@ -1,6 +1,7 @@
 from .models import Unit, Call
 
 
+# Context processors made to sent object from database to web page
 def unit(request):
     unit_obj = Unit.objects.first()
     return {'unit': unit_obj}

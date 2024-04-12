@@ -10,7 +10,7 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
 
     <style>
-
+{#Markers used for drawing points#}
     .marker {
         background-image: url("{% static 'images/home.png' %}");
         background-size: cover;
@@ -97,7 +97,8 @@
         center: [{{ unit.longitude }}, {{ unit.latitude }}],
         zoom: 12
     });
-
+      
+{#Showing routing to place of call#}
       {% if call.active %}
     map.on('load', () => {
         const startCoordinates = [{{ unit.longitude }}, {{ unit.latitude }}];
@@ -163,6 +164,8 @@
             map.fitBounds(bounds, { padding: 50 });
         });
     });
+    
+// Showing just map and a point of unit base
     {% else %}
       map.on('load', () => {
           const geojson = {
@@ -190,14 +193,19 @@
                   .addTo(map);
           }
       });
+// Timer functions
     {% endif %}
-
-    function setTimer(minutes) {
+    function setTimer(minutes) { // Used for setting a timer
             const timerElement = document.getElementById("timer");
-            timerElement.textContent = `0${minutes}:00`;
+            timerElement.textContent =
+                {% if unit.minutes_to_answer == 10 %}
+                    `${minutes}:00`;
+                {% else %}
+                    `0${minutes}:00`;
+                {% endif %}
     }
 
-    function startTimer(minutes) {
+    function startTimer(minutes) { // Starting a timer
         const timerElement = document.getElementById("timer");
         let remainingSeconds = minutes * 60;
 
@@ -219,12 +227,12 @@
         }
     }
 
-    function playGong() {
+    function playGong() { // Play gong
         const gong = new Audio('{% static 'audio/Gong sound.mp3' %}');
         gong.play();
     }
 
-    function playBell() {
+    function playBell() { // Play bell
         const bell = new Audio('{% static 'audio/Bell sound.mp3' %}');
         bell.play()
     }
